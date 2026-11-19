@@ -1,2 +1,1 @@
-# SQL Assignments
-# SQL Assessment
+
