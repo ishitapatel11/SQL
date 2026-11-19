@@ -1,1 +1,40 @@
-Section B
+create database food_delivery_db;
+use food_delivery_db;
+create table food_orders(
+order_id int primary key,
+customer_name varchar(100),
+restaurant_name varchar(100),
+item_ordered varchar (50),
+quantity int,
+price_per_item int,
+order_date date,
+city varchar(50)
+);
+
+insert into food_orders values
+(1, 'Ishita', 'Dominos', 'Pizza', 2, 450, '2026-11-01', 'Mumbai'),
+(2, 'Honey', 'McDonalds', 'Burger', 3, 180, '2026-11-02', 'Surat'),
+(3, 'Sahil', 'Pizza Hut', 'Pizza', 1, 550, '2026-11-03', 'Mumbai'),
+(4, 'Sia', 'Subway', 'Sandwich', 2, 220, '2026-11-04', 'Ahmedabad'),
+(5, 'Vedika', 'Dominos', 'Garlic Bread', 2, 150, '2026-11-05', 'Surat'),
+(6, 'Yash', 'KFC', 'Bucket Meal', 1, 650, '2026-11-06', 'Mumbai'),
+(7, 'Dev', 'McDonalds', 'Fries', 3, 100, '2026-11-07', 'Ahmedabad'),
+(8, 'Naitik', 'Pizza Hut', 'Pasta', 2, 300, '2026-11-08', 'Surat'),
+(9, 'Vrushank', 'KFC', 'Burger', 2, 250, '2026-11-09', 'Mumbai'),
+(10, 'Krish', 'Subway', 'Sandwich', 1, 200, '2026-11-10', 'Ahmedabad');
+
+select * from food_orders;
+
+select * from food_orders
+where city = "Mumbai"
+order by price_per_item desc;
+
+select distinct restaurant_name from food_orders;
+
+select *,
+quantity * price_per_item as order_total
+from food_orders
+order by order_total desc
+limit 5;
+
+
