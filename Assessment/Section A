@@ -1,0 +1,112 @@
+SECTION A
+
+SCENARIO 1
+
+I would use `GROUP BY` to group orders according to restaurant ID. Then, I would use `SUM()` to calculate total revenue and `COUNT()` to count the orders for each restaurant.
+After grouping, I would use `HAVING` to show only restaurants with revenue above ₹1,00,000 and at least 50 orders during the previous month.
+
+Why HAVING instead of WHERE?
+- `WHERE` filters individual records before grouping.
+- `HAVING` filters groups after aggregation.
+If we use `WHERE` directly with aggregate functions like `SUM()` or `COUNT()`, it will produce an error because aggregate results cannot be filtered directly using `WHERE`.
+
+In simple words, `WHERE` filters individual records, while `HAVING` filters grouped results.
+
+SCENARIO 2
+
+I would use a `LEFT JOIN` to include all registered customers, even those who have never placed an order.
+To show only the most recent order for each customer, I would use the `ROW_NUMBER()` window function. It ranks each customer's orders by date, with the latest order getting rank 1.
+
+Why LEFT JOIN instead of INNER JOIN?
+- `LEFT JOIN` includes all customers, even if they have no orders.
+- `INNER JOIN` includes only customers who have matching orders.
+
+If we use `INNER JOIN`, customers who have never ordered will be missing from the report. This could make it difficult for the marketing team to identify customers who have not made their first purchase.
+
+In simple words, `LEFT JOIN` keeps all customers, while `INNER JOIN` keeps only customers with matching orders.
+
+SCENARIO 3
+
+I would use a scalar subquery to calculate the overall average delivery time of the platform. The main query would calculate the average delivery time for each agent and compare it with the overall average.
+
+A scalar subquery is suitable because it returns a single value, which is the platform's average delivery time.
+
+What would happen if we placed the subquery in the SELECT clause instead?
+It would display the overall average delivery time as an additional column for each agent instead of filtering the results.
+We would still need `HAVING` to show only agents whose average delivery time is lower than the platform average.
+
+In simple words:
+- The subquery calculates the overall average.
+- The main query calculates each agent's average.
+- `HAVING` filters agents whose average is lower than the overall average.
+
+SCENARIO 4
+
+Both functions are used to rank records, but they handle ties differently.
+
+- `RANK()` gives the same rank to records with equal values and skips the next rank.
+- `DENSE_RANK()` gives the same rank to records with equal values but does not skip any rank.
+
+Example:
+Suppose three restaurants in Surat have these revenues:
+
+ Restaurant  Revenue 
+| Restaurant A | ₹1,50,000 |
+| Restaurant B | ₹1,20,000 |
+| Restaurant C | ₹1,20,000 |
+
+Using RANK():
+
+Restaurant Rank 
+| Restaurant A | 1 |
+| Restaurant B | 2 |
+| Restaurant C | 2 |
+
+The next rank will be 4.
+
+Using DENSE_RANK():
+
+ Restaurant  Rank 
+| Restaurant A | 1 |
+| Restaurant B | 2 |
+| Restaurant C | 2 |
+
+The next rank will be 3.
+
+Which would I choose and why?
+I would choose `DENSE_RANK()` because it keeps the ranking continuous and gives the same rank to restaurants with equal revenue.
+This helps the product team identify the top three distinct revenue positions in each city.
+However, both functions can return more than three restaurants when there are ties. If exactly three restaurants are required, `ROW_NUMBER()` with an additional tie-breaker would be a better choice.
+
+SCENARIO 5
+
+I would use `CASE WHEN` in the SELECT statement to classify customers based on their total lifetime spending. It creates a classification column in the output without creating a new table.
+The categories would be:
+- Platinum: Spend above ₹5,000.
+- Gold: Spend from ₹2,000 to ₹5,000.
+- Standard: Spend below ₹2,000.
+
+What happens if a customer spends exactly ₹5,000?
+The customer will fall into the Gold category because the Platinum condition checks for an amount greater than ₹5,000, while the Gold condition includes amounts greater than or equal to ₹2,000.
+
+Why does the order of WHEN conditions matter?
+SQL checks the conditions from top to bottom and stops when it finds the first matching condition. Therefore, the conditions must be written in the correct order.
+
+SCENARIO 6
+A database index helps the database find records faster without checking every row in a table. It works like the index of a book, helping us find information quickly.
+MySQL commonly uses B-tree indexes to organise values and locate the required records.
+
+Why would an index improve this query?
+Since the query joins four large tables, an index on frequently used JOIN columns can help the database find matching records faster and reduce full table scans. This can improve query performance.
+
+Can adding indexes hurt performance?
+Yes. Too many indexes can create problems:
+- INSERT: New records take longer to insert because indexes also need updating.
+- UPDATE: Updating indexed columns may take longer.
+- DELETE: Deleting records also requires index maintenance.
+- Storage: Extra indexes use additional storage space.
+
+What is the main trade-off?
+The main trade-off is between read performance, write performance and storage space. Indexes can make data retrieval faster, but they can slow down data changes.
+Therefore, I would add indexes only to useful columns and check the query execution plan instead of creating indexes on every column.
+
